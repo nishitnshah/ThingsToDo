@@ -17,6 +17,7 @@ public class EditItemActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_item);
+        setTitle("Edit Task");
         atEditText = (EditText) findViewById(R.id.atEditText);
         clickItem = getIntent().getStringExtra("clItem");
         atEditText.setText(clickItem);
