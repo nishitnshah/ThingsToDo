@@ -42,9 +42,11 @@ public class MainActivity extends AppCompatActivity {
         etEditText = (EditText) findViewById(R.id.etEditText);
         lvItems.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id){
+                Item item = new Item(database.getIdFromName(todoItems.get(position)),todoItems.get(position));
                 todoItems.remove(position);
                 aToDoAdapter.notifyDataSetChanged();
-                writeItems();
+                database.deleteItem(item);
+                //writeItems();
                 return false;
             }
         });
@@ -61,7 +63,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void populateArrayItems() {
-        readItems();
+        //readItems();
+        readDatabase();
         aToDoAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, todoItems);
     }
 
@@ -108,15 +111,17 @@ public class MainActivity extends AppCompatActivity {
     public void onAddItem(View view) {
         aToDoAdapter.add(etEditText.getText().toString());
         etEditText.setText("");
-        writeItems();
+        //writeItems();
+        writeDatabase();
     }
 
     protected void onActivityResult(int request_code, int result_code, Intent data) {
         if((request_code == 1) && (result_code == 1)) {
-            String newItem = data.getExtras().getString("newText").toString();
-            todoItems.set(clkPosition, newItem);
+            mString = data.getExtras().getString("newText").toString();
+            todoItems.set(clkPosition, mString);
             aToDoAdapter.notifyDataSetChanged();
-            writeItems();
+            //writeItems();
+            updateDatabase(false);
         }
     }
 }

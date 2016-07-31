@@ -74,11 +74,29 @@ public class ThingsToDoDatabase extends SQLiteOpenHelper {
         try {
             ContentValues values = new ContentValues();
             values.put(ITEM, item.getItemName());
-
-            db.update(TABLE_LIST, values, ID + " ?", new String[] {Integer.toString(item.getId())});
+            Log.d("updateItem","ID: " + Integer.toString(item.getId()) + " name: " + item.getItemName());
+            db.update(TABLE_LIST, values, ID + " = ?", new String[] {Integer.toString(item.getId())});
+            db.setTransactionSuccessful();
         }catch (Exception e) {
             Log.d("updateItem","Error while updating an item in database");
         } finally {
+            db.endTransaction();
+        }
+    }
+
+    public void deleteItem (Item item) {
+        int id = item.getId();
+        String name = item.getItemName();
+        String deleteQuery = String.format("DELETE FROM %s WHERE %s = ?", TABLE_LIST, ID);
+
+        SQLiteDatabase db = getWritableDatabase();
+        db.beginTransaction();
+        try {
+            db.delete(TABLE_LIST, ID + " = ?",new String[] {String.valueOf(id)});
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            Log.d("deleteItem","Error while deleting the itme");
+        } finally{
             db.endTransaction();
         }
     }
@@ -119,7 +137,6 @@ public class ThingsToDoDatabase extends SQLiteOpenHelper {
         try {
             if(cursor.moveToFirst()) {
                 retId = cursor.getInt(0);
-                db.setTransactionSuccessful();
             }
         } catch (Exception e) {
             Log.d("getIdFromName", "Error while locating id in database");
