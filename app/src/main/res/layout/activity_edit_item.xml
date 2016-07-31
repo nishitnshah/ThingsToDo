@@ -29,6 +29,6 @@
         android:text="@string/save_item"
         android:id="@+id/Save"
         android:onClick="saveItem"
-        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/atEditText"
         android:layout_centerHorizontal="true" />
 </RelativeLayout>

@@ -28,8 +28,7 @@
         android:layout_above="@+id/btnAddItem"
         android:layout_alignParentTop="true"
         android:layout_alignRight="@+id/btnAddItem"
-        android:layout_alignEnd="@+id/btnAddItem"
-        android:inputType="textMultiLine"/>
+        android:layout_alignEnd="@+id/btnAddItem"/>
 
     <EditText
         android:layout_width="wrap_content"

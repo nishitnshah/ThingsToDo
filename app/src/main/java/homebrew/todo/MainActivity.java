@@ -23,12 +23,19 @@ public class MainActivity extends AppCompatActivity {
     ListView lvItems;
     EditText etEditText;
     int clkPosition;
+    int mId;
+    String mString;
+
+    ThingsToDoDatabase database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setTitle("Things To Do");
+
+        database  = ThingsToDoDatabase.getInstance(this);
+
         populateArrayItems();
         lvItems = (ListView) findViewById(R.id.lvItems);
         lvItems.setAdapter(aToDoAdapter);
@@ -45,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String clickItem = todoItems.get(position);
                 clkPosition = position;
+                mId = database.getIdFromName(clickItem);
                 Intent i = new Intent(MainActivity.this, EditItemActivity.class);
                 i.putExtra("clItem", clickItem);
                 startActivityForResult(i, 1);
@@ -67,6 +75,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void readDatabase () {
+        todoItems = new ArrayList<String>(database.getAllItemNames());
+    }
+
     private void writeItems() {
         File filesDir = getFilesDir();
         File file = new File(filesDir, "todo.txt");
@@ -74,6 +86,22 @@ public class MainActivity extends AppCompatActivity {
             FileUtils.writeLines(file, todoItems);
         } catch (IOException e) {
 
+        }
+    }
+
+    private void writeDatabase () {
+        int listSize = todoItems.size();
+        Item tItem = new Item (0,todoItems.get(listSize-1));
+        database.addItem(tItem);
+    }
+
+    private void updateDatabase (boolean remove) {
+        if(remove) {
+
+        }
+        else {
+            Item item = new Item(mId, mString);
+            database.updateItem(item);
         }
     }
 
