@@ -46,7 +46,6 @@ public class MainActivity extends AppCompatActivity {
                 todoItems.remove(position);
                 aToDoAdapter.notifyDataSetChanged();
                 database.deleteItem(item);
-                //writeItems();
                 return false;
             }
         });
@@ -63,33 +62,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void populateArrayItems() {
-        //readItems();
         readDatabase();
         aToDoAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, todoItems);
     }
 
-    private void readItems() {
-        File filesDir = getFilesDir();
-        File file = new File(filesDir, "todo.txt");
-        try{
-            todoItems = new ArrayList<String>(FileUtils.readLines(file));
-        } catch (IOException e) {
-
-        }
-    }
-
     private void readDatabase () {
         todoItems = new ArrayList<String>(database.getAllItemNames());
-    }
-
-    private void writeItems() {
-        File filesDir = getFilesDir();
-        File file = new File(filesDir, "todo.txt");
-        try{
-            FileUtils.writeLines(file, todoItems);
-        } catch (IOException e) {
-
-        }
     }
 
     private void writeDatabase () {
@@ -98,20 +76,15 @@ public class MainActivity extends AppCompatActivity {
         database.addItem(tItem);
     }
 
-    private void updateDatabase (boolean remove) {
-        if(remove) {
-
-        }
-        else {
-            Item item = new Item(mId, mString);
-            database.updateItem(item);
-        }
+    private void updateDatabase () {
+        Item item = new Item(mId, mString);
+        database.updateItem(item);
     }
 
     public void onAddItem(View view) {
+        //TODO: Find a way to push the add button down after clicking
         aToDoAdapter.add(etEditText.getText().toString());
         etEditText.setText("");
-        //writeItems();
         writeDatabase();
     }
 
@@ -120,8 +93,7 @@ public class MainActivity extends AppCompatActivity {
             mString = data.getExtras().getString("newText").toString();
             todoItems.set(clkPosition, mString);
             aToDoAdapter.notifyDataSetChanged();
-            //writeItems();
-            updateDatabase(false);
+            updateDatabase();
         }
     }
 }

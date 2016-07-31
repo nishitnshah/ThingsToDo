@@ -52,8 +52,8 @@ public class ThingsToDoDatabase extends SQLiteOpenHelper {
 
     public void addItem(Item item) {
         SQLiteDatabase db = getWritableDatabase();
-
         db.beginTransaction();
+
         try {
             ContentValues values = new ContentValues();
             values.put(ITEM, item.getItemName());
@@ -69,12 +69,11 @@ public class ThingsToDoDatabase extends SQLiteOpenHelper {
 
     public void updateItem (Item item) {
         SQLiteDatabase db = getWritableDatabase();
-
         db.beginTransaction();
+
         try {
             ContentValues values = new ContentValues();
             values.put(ITEM, item.getItemName());
-            Log.d("updateItem","ID: " + Integer.toString(item.getId()) + " name: " + item.getItemName());
             db.update(TABLE_LIST, values, ID + " = ?", new String[] {Integer.toString(item.getId())});
             db.setTransactionSuccessful();
         }catch (Exception e) {
@@ -86,11 +85,10 @@ public class ThingsToDoDatabase extends SQLiteOpenHelper {
 
     public void deleteItem (Item item) {
         int id = item.getId();
-        String name = item.getItemName();
-        String deleteQuery = String.format("DELETE FROM %s WHERE %s = ?", TABLE_LIST, ID);
 
         SQLiteDatabase db = getWritableDatabase();
         db.beginTransaction();
+
         try {
             db.delete(TABLE_LIST, ID + " = ?",new String[] {String.valueOf(id)});
             db.setTransactionSuccessful();
@@ -103,10 +101,10 @@ public class ThingsToDoDatabase extends SQLiteOpenHelper {
 
     public List<String> getAllItemNames() {
         List<String> readItems = new ArrayList<>();
-
         String readQuery = String.format("SELECT * FROM %s", TABLE_LIST);
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.rawQuery(readQuery, null);
+
         try {
             if(cursor.moveToFirst()) {
                 do {
@@ -134,6 +132,7 @@ public class ThingsToDoDatabase extends SQLiteOpenHelper {
 
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.rawQuery(query, new String [] {String.valueOf(name)});
+
         try {
             if(cursor.moveToFirst()) {
                 retId = cursor.getInt(0);
