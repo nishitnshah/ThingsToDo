@@ -1,4 +1,4 @@
-package homebrew.todo;
+package homebrew.todo.models;
 
 /**
  * Created by Nishit on 7/30/16.

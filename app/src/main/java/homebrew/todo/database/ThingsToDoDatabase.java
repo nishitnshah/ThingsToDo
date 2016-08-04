@@ -1,4 +1,4 @@
-package homebrew.todo;
+package homebrew.todo.database;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -9,6 +9,8 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import homebrew.todo.models.Item;
 
 /**
  * Created by Nishit on 7/30/16.
@@ -50,21 +52,23 @@ public class ThingsToDoDatabase extends SQLiteOpenHelper {
         }
     }
 
-    public void addItem(Item item) {
+    public long addItem(Item item) {
         SQLiteDatabase db = getWritableDatabase();
         db.beginTransaction();
+        long id = -1;
 
         try {
             ContentValues values = new ContentValues();
             values.put(ITEM, item.getItemName());
 
-            db.insertOrThrow(TABLE_LIST, null, values);
+            id = db.insertOrThrow(TABLE_LIST, null, values);
             db.setTransactionSuccessful();
         } catch (Exception e) {
             Log.d("addItem", "Error while trying to add iten to database");
         } finally {
             db.endTransaction();
         }
+        return id;
     }
 
     public void updateItem (Item item) {
@@ -113,6 +117,32 @@ public class ThingsToDoDatabase extends SQLiteOpenHelper {
                     String text = cursor.getString(cursor.getColumnIndex(ITEM));
                     item.set(id,text);
                     readItems.add(item.getItemName());
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            Log.d("getAllItems", "Error while reading all items from database");
+        } finally{
+            if(cursor != null && !cursor.isClosed()) {
+                cursor.close();
+            }
+        }
+        return readItems;
+    }
+
+    public List<Item> getAllItems() {
+        List<Item> readItems = new ArrayList<>();
+        String readQuery = String.format("SELECT * FROM %s", TABLE_LIST);
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery(readQuery, null);
+
+        try {
+            if(cursor.moveToFirst()) {
+                do {
+                    Item item = new Item();
+                    int id = cursor.getInt(0); //gets the unique id
+                    String text = cursor.getString(cursor.getColumnIndex(ITEM));
+                    item.set(id,text);
+                    readItems.add(item);
                 } while (cursor.moveToNext());
             }
         } catch (Exception e) {

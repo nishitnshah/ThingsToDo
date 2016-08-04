@@ -1,25 +1,27 @@
-package homebrew.todo;
+package homebrew.todo.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 
-import org.apache.commons.io.FileUtils;
-
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
+
+import homebrew.todo.R;
+import homebrew.todo.adapters.ToDoAdapter;
+import homebrew.todo.database.ThingsToDoDatabase;
+import homebrew.todo.models.Item;
 
 public class MainActivity extends AppCompatActivity {
 
-    ArrayList<String> todoItems;
-    ArrayAdapter<String> aToDoAdapter;
+    ArrayList<Item> todoItems;
+    ToDoAdapter aToDoAdapter;
     ListView lvItems;
     EditText etEditText;
     int clkPosition;
@@ -42,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
         etEditText = (EditText) findViewById(R.id.etEditText);
         lvItems.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id){
-                Item item = new Item(database.getIdFromName(todoItems.get(position)),todoItems.get(position));
+                Item item = new Item(database.getIdFromName(todoItems.get(position).getItemName()),todoItems.get(position).getItemName());
                 todoItems.remove(position);
                 aToDoAdapter.notifyDataSetChanged();
                 database.deleteItem(item);
@@ -51,9 +53,9 @@ public class MainActivity extends AppCompatActivity {
         });
         lvItems.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String clickItem = todoItems.get(position);
+                String clickItem = todoItems.get(position).getItemName();
                 clkPosition = position;
-                mId = database.getIdFromName(clickItem);
+                mId = todoItems.get(position).getId();//database.getIdFromName(clickItem);
                 Intent i = new Intent(MainActivity.this, EditItemActivity.class);
                 i.putExtra("clItem", clickItem);
                 startActivityForResult(i, 1);
@@ -63,17 +65,17 @@ public class MainActivity extends AppCompatActivity {
 
     public void populateArrayItems() {
         readDatabase();
-        aToDoAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, todoItems);
+        aToDoAdapter = new ToDoAdapter(this, todoItems);
     }
 
     private void readDatabase () {
-        todoItems = new ArrayList<String>(database.getAllItemNames());
+        todoItems = new ArrayList<Item>(database.getAllItems());
     }
 
-    private void writeDatabase () {
-        int listSize = todoItems.size();
-        Item tItem = new Item (0,todoItems.get(listSize-1));
-        database.addItem(tItem);
+    private long writeDatabase (String addString) {
+        Item tItem = new Item (0,addString);
+        long id = database.addItem(tItem);
+        return id;
     }
 
     private void updateDatabase () {
@@ -82,16 +84,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onAddItem(View view) {
-        //TODO: Find a way to push the add button down after clicking
-        aToDoAdapter.add(etEditText.getText().toString());
+        String addString = etEditText.getText().toString();
+        long id = writeDatabase(addString);
+        Item aItem = new Item((int) id, addString);
+        todoItems.add(aItem);
+        aToDoAdapter.notifyDataSetChanged();
         etEditText.setText("");
-        writeDatabase();
+        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(etEditText.getWindowToken(), 0);
+
     }
 
     protected void onActivityResult(int request_code, int result_code, Intent data) {
         if((request_code == 1) && (result_code == 1)) {
             mString = data.getExtras().getString("newText").toString();
-            todoItems.set(clkPosition, mString);
+            Item tItem = new Item(mId,mString);
+            todoItems.set(clkPosition, tItem);
             aToDoAdapter.notifyDataSetChanged();
             updateDatabase();
         }
