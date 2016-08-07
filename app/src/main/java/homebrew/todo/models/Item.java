@@ -8,7 +8,8 @@ public class Item {
     private String itemName;
 
     public Item () {
-
+        id = 0;
+        itemName = "";
     }
 
     public Item(int id, String itemName) {
