@@ -6,10 +6,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.view.LayoutInflaterCompat;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
@@ -43,7 +41,7 @@ public class EditDialog extends DialogFragment {
     public Dialog onCreateDialog(Bundle SavedInstance) {
         String text = getArguments().getString("text");
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        View view = inflater.inflate(R.layout.fragment_edit_dialog, null);
+        View view = inflater.inflate(R.layout.item_edit_dialog, null);
         mEditText = (EditText) view.findViewById(R.id.diaEditText);
         mEditText.setText(text);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
