@@ -16,9 +16,10 @@ import java.util.ArrayList;
 import homebrew.todo.R;
 import homebrew.todo.adapters.ToDoAdapter;
 import homebrew.todo.database.ThingsToDoDatabase;
+import homebrew.todo.fragments.EditDialog;
 import homebrew.todo.models.Item;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements EditDialog.EditDialogListener {
 
     ArrayList<Item> todoItems;
     ToDoAdapter aToDoAdapter;
@@ -53,12 +54,10 @@ public class MainActivity extends AppCompatActivity {
         });
         lvItems.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String clickItem = todoItems.get(position).getItemName();
                 clkPosition = position;
                 mId = todoItems.get(position).getId();//database.getIdFromName(clickItem);
-                Intent i = new Intent(MainActivity.this, EditItemActivity.class);
-                i.putExtra("clItem", clickItem);
-                startActivityForResult(i, 1);
+                //showEditActivity(position);
+                showEditDialog(position);
             }
         });
     }
@@ -95,6 +94,13 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void showEditActivity(int position) {
+        String clickItem = todoItems.get(position).getItemName();
+        Intent i = new Intent(MainActivity.this, EditItemActivity.class);
+        i.putExtra("clItem", clickItem);
+        startActivityForResult(i, 1);
+    }
+
     protected void onActivityResult(int request_code, int result_code, Intent data) {
         if((request_code == 1) && (result_code == 1)) {
             mString = data.getExtras().getString("newText").toString();
@@ -103,5 +109,18 @@ public class MainActivity extends AppCompatActivity {
             aToDoAdapter.notifyDataSetChanged();
             updateDatabase();
         }
+    }
+
+    private void showEditDialog (int position) {
+        EditDialog dialog = EditDialog.newInstance(todoItems.get(position));
+        dialog.show(getSupportFragmentManager(), "editDialog");
+    }
+
+    public void onFinishEditDialog (Item item) {
+        item.setId(mId);
+        todoItems.set(clkPosition, item);
+        mString = item.getItemName();
+        aToDoAdapter.notifyDataSetInvalidated();
+        updateDatabase();
     }
 }
