@@ -30,8 +30,7 @@ public class MainActivity extends AppCompatActivity implements EditDialog.EditDi
     ToDoAdapter aToDoAdapter;
     ListView lvItems;
     int clkPosition;
-    int mId;
-    String mString;
+    Item mItem;
 
     ThingsToDoDatabase database;
 
@@ -40,7 +39,7 @@ public class MainActivity extends AppCompatActivity implements EditDialog.EditDi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setTitle("Things To Do");
-
+        mItem = new Item();
         database  = ThingsToDoDatabase.getInstance(this);
 
         populateArrayItems();
@@ -48,7 +47,8 @@ public class MainActivity extends AppCompatActivity implements EditDialog.EditDi
         lvItems.setAdapter(aToDoAdapter);
         lvItems.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id){
-                Item item = new Item(database.getIdFromName(todoItems.get(position).getItemName()),todoItems.get(position).getItemName());
+                Item item = new Item();
+                item = todoItems.get(position);
                 todoItems.remove(position);
                 aToDoAdapter.notifyDataSetChanged();
                 database.deleteItem(item);
@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements EditDialog.EditDi
         lvItems.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 clkPosition = position;
-                mId = todoItems.get(position).getId();//database.getIdFromName(clickItem);
+                mItem.setId(todoItems.get(position).getId());
                 showEditDialog(position);
             }
         });
@@ -86,22 +86,13 @@ public class MainActivity extends AppCompatActivity implements EditDialog.EditDi
         todoItems = new ArrayList<Item>(database.getAllItems());
     }
 
-    private long writeDatabase (String addString) {
-        Item tItem = new Item (0,addString);
-        long id = database.addItem(tItem);
+    private long writeDatabase (Item item) {
+        long id = database.addItem(item);
         return id;
     }
 
     private void updateDatabase () {
-        Item item = new Item(mId, mString);
-        database.updateItem(item);
-    }
-
-    private void showEditActivity(int position) {
-        String clickItem = todoItems.get(position).getItemName();
-        Intent i = new Intent(MainActivity.this, EditItemActivity.class);
-        i.putExtra("clItem", clickItem);
-        startActivityForResult(i, 1);
+        database.updateItem(mItem);
     }
 
     private void showEditDialog (int position) {
@@ -116,16 +107,16 @@ public class MainActivity extends AppCompatActivity implements EditDialog.EditDi
     }
 
     public void onFinishEditDialog (Item item) {
-        item.setId(mId);
+        item.setId(mItem.getId());
         todoItems.set(clkPosition, item);
-        mString = item.getItemName();
+        mItem.setItemName(item.getItemName());
+        mItem.setItemDate(item.getItemDate());
         aToDoAdapter.notifyDataSetInvalidated();
         updateDatabase();
     }
 
     public void onFinishAddDialog (Item item) {
-        String addString = item.getItemName();
-        long id = writeDatabase(addString);
+        long id = writeDatabase(item);
         item.setId((int)id);
         todoItems.add(item);
         aToDoAdapter.notifyDataSetChanged();

@@ -33,10 +33,10 @@ public class ToDoAdapter extends ArrayAdapter<Item> {
         }
         //convertView.setBackgroundColor(color_arry[(position%6)]);
         //convertView.setAlpha(0.5f);
-        //TextView itemId = (TextView) convertView.findViewById(R.id.itemId);
+        TextView itemDate = (TextView) convertView.findViewById(R.id.itemDate);
         TextView itemString = (TextView) convertView.findViewById(R.id.itemString);
 
-        //itemId.setText(toString().valueOf(item.getId()));
+        itemDate.setText(toString().valueOf(item.getItemDate()));
         itemString.setText(item.getItemName());
 
         return convertView;

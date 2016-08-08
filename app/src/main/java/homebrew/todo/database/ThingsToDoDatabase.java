@@ -21,6 +21,7 @@ public class ThingsToDoDatabase extends SQLiteOpenHelper {
     private static final String TABLE_LIST = "list";
     private static final String ID = "key";
     private static final String ITEM = "item";
+    private static final String DATE = "date";
     private static ThingsToDoDatabase Instance;
 
     public static synchronized ThingsToDoDatabase getInstance(Context context) {
@@ -39,7 +40,8 @@ public class ThingsToDoDatabase extends SQLiteOpenHelper {
         String CREATE_ITEM_DATABASE = "CREATE TABLE " + TABLE_LIST +
                 "(" +
                 ID + " INTEGER PRIMARY KEY," +
-                ITEM + " TEXT" +
+                ITEM + " TEXT," +
+                DATE + " TEXT" +
                 ")";
         db.execSQL(CREATE_ITEM_DATABASE);
     }
@@ -60,11 +62,12 @@ public class ThingsToDoDatabase extends SQLiteOpenHelper {
         try {
             ContentValues values = new ContentValues();
             values.put(ITEM, item.getItemName());
+            values.put(DATE, item.getItemDate());
 
             id = db.insertOrThrow(TABLE_LIST, null, values);
             db.setTransactionSuccessful();
         } catch (Exception e) {
-            Log.d("addItem", "Error while trying to add iten to database");
+            Log.d("addItem", "Error while trying to add item to database");
         } finally {
             db.endTransaction();
         }
@@ -78,6 +81,7 @@ public class ThingsToDoDatabase extends SQLiteOpenHelper {
         try {
             ContentValues values = new ContentValues();
             values.put(ITEM, item.getItemName());
+            values.put(DATE, item.getItemDate());
             db.update(TABLE_LIST, values, ID + " = ?", new String[] {Integer.toString(item.getId())});
             db.setTransactionSuccessful();
         }catch (Exception e) {
@@ -103,6 +107,18 @@ public class ThingsToDoDatabase extends SQLiteOpenHelper {
         }
     }
 
+    public void deleteAll () {
+        SQLiteDatabase db = getWritableDatabase();
+        db.beginTransaction();
+        try {
+            db.execSQL("DELETE FROM " + TABLE_LIST);
+        }catch (Exception e) {
+            Log.d("deleteAll", "Error while deleting all entries");
+        } finally {
+            db.endTransaction();
+        }
+    }
+
     public List<String> getAllItemNames() {
         List<String> readItems = new ArrayList<>();
         String readQuery = String.format("SELECT * FROM %s", TABLE_LIST);
@@ -115,7 +131,7 @@ public class ThingsToDoDatabase extends SQLiteOpenHelper {
                     Item item = new Item();
                     int id = cursor.getInt(0); //gets the unique id
                     String text = cursor.getString(cursor.getColumnIndex(ITEM));
-                    item.set(id,text);
+                    item.set(id,text,"");
                     readItems.add(item.getItemName());
                 } while (cursor.moveToNext());
             }
@@ -141,7 +157,8 @@ public class ThingsToDoDatabase extends SQLiteOpenHelper {
                     Item item = new Item();
                     int id = cursor.getInt(0); //gets the unique id
                     String text = cursor.getString(cursor.getColumnIndex(ITEM));
-                    item.set(id,text);
+                    String date = cursor.getString(cursor.getColumnIndex(DATE));
+                    item.set(id,text,date);
                     readItems.add(item);
                 } while (cursor.moveToNext());
             }
