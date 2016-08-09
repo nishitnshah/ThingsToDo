@@ -23,6 +23,7 @@ public class ToDoAdapter extends ArrayAdapter<Item> {
     public ToDoAdapter(Context context, ArrayList<Item> items) {
         super(context, 0, items);
     }
+    String [] month_array = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -34,9 +35,13 @@ public class ToDoAdapter extends ArrayAdapter<Item> {
         //convertView.setBackgroundColor(color_arry[(position%6)]);
         //convertView.setAlpha(0.5f);
         TextView itemDate = (TextView) convertView.findViewById(R.id.itemDate);
+        TextView itemMonth = (TextView) convertView.findViewById(R.id.itemMonth);
         TextView itemString = (TextView) convertView.findViewById(R.id.itemString);
-
-        itemDate.setText(toString().valueOf(item.getItemDate()));
+        String day = item.getItemDate().split("-")[1];
+        int month = Integer.parseInt(item.getItemDate().split("-")[0]);
+        //itemDate.setText(toString().valueOf(item.getItemDate()));
+        itemDate.setText(day);
+        itemMonth.setText(month_array[month].toString());
         itemString.setText(item.getItemName());
 
         return convertView;
