@@ -1,6 +1,6 @@
 # ThingsToDo
 List of things to do.
-This app allows you to create list of task you need to get done and allows to set alarm for it too!
+This app allows you to create list of task you need to get done, specify the due date and priority. It colors the items and date based on priority specified by user.
 
 Submitted by: Nishit Shah
 
