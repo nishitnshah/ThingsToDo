@@ -108,9 +108,10 @@ public class MainActivity extends AppCompatActivity implements EditDialog.EditDi
 
     public void onFinishEditDialog (Item item) {
         item.setId(mItem.getId());
-        todoItems.set(clkPosition, item);
         mItem.setItemName(item.getItemName());
         mItem.setItemDate(item.getItemDate());
+        mItem.setItemPriority(item.getItemPriority());
+        todoItems.set(clkPosition, item);
         aToDoAdapter.notifyDataSetInvalidated();
         updateDatabase();
     }

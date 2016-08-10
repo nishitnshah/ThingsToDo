@@ -13,7 +13,6 @@
                     android:gravity="center"
                     android:src="@drawable/circle"
                     android:layout_centerInParent="true" />
-                    <!--android:padding="5dp" /-->
 
                 <TextView
                     android:id="@+id/itemDate"
@@ -21,12 +20,8 @@
                     android:layout_height="wrap_content"
                     android:textSize="24sp"
                     android:textAppearance="?android:attr/textAppearanceListItem"
-                    android:layout_centerHorizontal="true"
+                    android:layout_centerHorizontal="true" />
 
-                     />
-                    <!--android:paddingLeft="24sp"
-                    android:paddingRight="24sp"
-                    android:layout_weight="0.6"-->
                 <TextView
                     android:id="@+id/itemMonth"
                     android:layout_width="wrap_content"

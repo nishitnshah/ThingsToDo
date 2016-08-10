@@ -22,6 +22,7 @@ public class ThingsToDoDatabase extends SQLiteOpenHelper {
     private static final String ID = "key";
     private static final String ITEM = "item";
     private static final String DATE = "date";
+    private static final String PRIORITY = "priority";
     private static ThingsToDoDatabase Instance;
 
     public static synchronized ThingsToDoDatabase getInstance(Context context) {
@@ -41,7 +42,8 @@ public class ThingsToDoDatabase extends SQLiteOpenHelper {
                 "(" +
                 ID + " INTEGER PRIMARY KEY," +
                 ITEM + " TEXT," +
-                DATE + " TEXT" +
+                DATE + " TEXT," +
+                PRIORITY + " TEXT" +
                 ")";
         db.execSQL(CREATE_ITEM_DATABASE);
     }
@@ -63,7 +65,7 @@ public class ThingsToDoDatabase extends SQLiteOpenHelper {
             ContentValues values = new ContentValues();
             values.put(ITEM, item.getItemName());
             values.put(DATE, item.getItemDate());
-
+            values.put(PRIORITY, item.getItemPriority());
             id = db.insertOrThrow(TABLE_LIST, null, values);
             db.setTransactionSuccessful();
         } catch (Exception e) {
@@ -82,6 +84,7 @@ public class ThingsToDoDatabase extends SQLiteOpenHelper {
             ContentValues values = new ContentValues();
             values.put(ITEM, item.getItemName());
             values.put(DATE, item.getItemDate());
+            values.put(PRIORITY, item.getItemPriority());
             db.update(TABLE_LIST, values, ID + " = ?", new String[] {Integer.toString(item.getId())});
             db.setTransactionSuccessful();
         }catch (Exception e) {
@@ -131,7 +134,7 @@ public class ThingsToDoDatabase extends SQLiteOpenHelper {
                     Item item = new Item();
                     int id = cursor.getInt(0); //gets the unique id
                     String text = cursor.getString(cursor.getColumnIndex(ITEM));
-                    item.set(id,text,"");
+                    item.set(id,text,"","");
                     readItems.add(item.getItemName());
                 } while (cursor.moveToNext());
             }
@@ -158,7 +161,8 @@ public class ThingsToDoDatabase extends SQLiteOpenHelper {
                     int id = cursor.getInt(0); //gets the unique id
                     String text = cursor.getString(cursor.getColumnIndex(ITEM));
                     String date = cursor.getString(cursor.getColumnIndex(DATE));
-                    item.set(id,text,date);
+                    String priority = cursor.getString(cursor.getColumnIndex(PRIORITY));
+                    item.set(id,text,date, priority);
                     readItems.add(item);
                 } while (cursor.moveToNext());
             }

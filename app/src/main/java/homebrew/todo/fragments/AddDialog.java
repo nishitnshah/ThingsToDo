@@ -9,8 +9,11 @@ import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Spinner;
 
 import homebrew.todo.R;
 import homebrew.todo.models.Item;
@@ -21,6 +24,8 @@ import homebrew.todo.models.Item;
 public class AddDialog extends DialogFragment {
     private EditText mEditText;
     private DatePicker mItemDate;
+    private Spinner mPriority;
+    private String [] mPriorityType;
 
     public AddDialog() {
 
@@ -31,6 +36,7 @@ public class AddDialog extends DialogFragment {
         Bundle args = new Bundle();
         args.putInt("id", item.getId());
         args.putString("text", item.getItemName());
+        args.putString("text", item.getItemPriority());
         frag.setArguments(args);
         return frag;
     }
@@ -44,11 +50,20 @@ public class AddDialog extends DialogFragment {
         String text = getArguments().getString("text");
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.item_edit_dialog, null);
+
         mEditText = (EditText) view.findViewById(R.id.diaEditText);
-        mItemDate = (DatePicker) view.findViewById(R.id.diaItemDate);
         mEditText.setText(text);
+
+        mItemDate = (DatePicker) view.findViewById(R.id.diaItemDate);
+
+        mPriority = (Spinner) view.findViewById(R.id.diaPriority);
+        mPriorityType = getResources().getStringArray(R.array.priority_type);
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, mPriorityType);
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mPriority.setAdapter(spinnerAdapter);
+
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("Edit Item");
+        builder.setTitle("Add New Item");
         builder.setView(view);
         mEditText.requestFocus();
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -56,7 +71,7 @@ public class AddDialog extends DialogFragment {
             public void onClick(DialogInterface dialog, int which) {
                 AddDialogListener listener = (AddDialogListener) getActivity();
                 String itemDate = mItemDate.getMonth() + "-" + mItemDate.getDayOfMonth() + "-" + mItemDate.getYear();
-                Item item = new Item(getArguments().getInt("id"), mEditText.getText().toString(), itemDate);
+                Item item = new Item(getArguments().getInt("id"), mEditText.getText().toString(), itemDate, mPriority.getSelectedItem().toString());
                 listener.onFinishAddDialog(item);
                 InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
