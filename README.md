@@ -14,12 +14,14 @@ The following **optional** features are implemented:
 
 * [X] Persist the todo items [into SQLite](http://guides.codepath.com/android/Persisting-Data-to-the-Device#sqlite) instead of a text file
 * [X] Improve style of the todo items in the list [using a custom adapter](http://guides.codepath.com/android/Using-an-ArrayAdapter-with-ListView)
-* [ ] Add support for completion due dates for todo items (and display within listview item)
+* [X] Add support for completion due dates for todo items (and display within listview item)
 * [X] Use a [DialogFragment](http://guides.codepath.com/android/Using-DialogFragment) instead of new Activity for editing items
 
 The following **additional** features are implemented:
 
 * [X] Added a "+" button to toolbar to add new items.
+* [X] Added support for specifying priority for each item.
+* [X] Each item is colored differently to indicate priority (Red = High, Green = Medium, Orange = Low)
 
 Walkthrough of the App:
 
@@ -32,5 +34,8 @@ Editing an item using Dialog
 
 ![Video Walkthrough](gifs/Edit_item_using_Dialog.gif)
 
+Completed app with due date and priority coloring
+
+![Video Walkthrough](gifs/Completed_app.gif)
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
