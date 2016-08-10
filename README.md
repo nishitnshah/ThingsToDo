@@ -4,6 +4,8 @@ This app allows you to create list of task you need to get done, specify the due
 
 Submitted by: Nishit Shah
 
+Time Spent : 20 Hrs
+
 The following **required** functionality is completed:
 
 * [x] User can **successfully add and remove items** from the todo list
